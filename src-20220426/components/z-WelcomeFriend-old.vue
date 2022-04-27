@@ -1,0 +1,98 @@
+<template>
+  <div class="friend">    
+    <i>
+      <slot name="icon"></slot>
+    </i>
+    <div class="details">
+      <p>WelcomeFriend.vue ✔</p>
+      <h3>
+        <slot name="heading"></slot>
+      </h3>      
+       <slot></slot>    
+    </div>
+  </div>
+</template>
+
+<style scoped>
+
+.friend {  
+  margin:3px;
+  margin-top: 3rem;
+  padding:3px;
+  display: flex;
+  border: 1px solid rgb(1, 100, 5);
+}
+
+.friend p { color:rgb(1, 100, 5); font-size: 10px;;}
+
+.details {
+  flex: 1;
+  margin-left: 1rem;
+  /* border:1px solid green; */
+}
+
+i {
+  display: flex;
+  place-items: center;
+  place-content: center;
+  width: 32px;
+  height: 32px;
+
+  color: var(--color-text);
+  color: blue;  
+}
+
+h3 {
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin-bottom: 0.4rem;
+  color: var(--color-heading);
+  /* border:1px solid blue; */
+}
+
+@media (min-width: 1024px) {
+  .friend {
+    margin-top: 0;
+    padding: 0.4rem 0 1rem calc(var(--section-gap) / 2);    
+  }
+
+  i {
+    top: calc(50% - 25px);
+    left: 10px;
+    /* left: -26px; */
+    position: absolute;
+    border: 1px solid rgb(18, 190, 2);
+    /* border: 1px solid var(--color-border); */
+    background: var(--color-background);
+    border-radius: 8px;
+    width: 50px;
+    height: 50px;
+  }
+
+  .friend:before {
+    content: ' ';
+    border-left: 1px solid var(--color-border);
+    position: absolute;
+    left: 0;
+    bottom: calc(50% + 25px);
+    height: calc(50% - 25px);
+  }
+
+  .friend:after {
+    content: ' ';
+    border-left: 1px solid var(--color-border);
+    position: absolute;
+    left: 0;
+    top: calc(50% + 25px);
+    height: calc(50% - 25px);
+  }
+
+  .friend:first-of-type:before {
+    display: none;
+  }
+
+  .friend:last-of-type:after {
+    display: none;
+  }
+}
+</style>

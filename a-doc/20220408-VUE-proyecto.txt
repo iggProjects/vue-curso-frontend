@@ -1,0 +1,89 @@
+Día: 08-04-2022
+
+Carpeta trabajada en el curso: 
+
+Links
+
+	Google doc teaher:
+	   https://docs.google.com/presentation/d/1H2TqF_hRK8TQNi4Go6FvWoSNj1vFqWh_R39wbHQK1Yg/edit#slide=id.g11f610acb17_0_16	
+
+
+COMPONENTS
+   https://vuejs.org/guide/essentials/component-basics.html
+
+require for paths in node js
+
+  https://nodejs.org/api/modules.html	
+
+  EJEMPLO en el código de CarruselComp.vue: <img v-bind:src="require('../assets/img/' + card)"/> 	
+
+  https://gist.github.com/branneman/8048520
+  https://stackoverflow.com/questions/10860244/how-to-make-node-js-require-absolute-instead-of-relative
+  https://kenichishibata.medium.com/3-ways-to-fix-relative-paths-in-nodejs-require-ffc7f89bd7e1
+	
+
+SVG FREE ICONS
+
+   https://www.w3.org/2000/svg	
+
+   https://www.svgrepo.com/
+   Ej:  https://www.svgrepo.com/svg/415130/jewel-pearl-sea hacer download y 
+	luego abrir con visual
+
+PROPS
+   https://vuejs.org/guide/components/props.html   ---   One-Way Data Flow
+	Vue components require explicit props declaration so that Vue knows what external props passed 
+	to the component should be treated as "fallthrough attributes" (which will be discussed in the next section).
+   Type-only props/emit declarations
+	https://vuejs.org/api/sfc-script-setup.html#typescript-only-features
+
+   https://es.vuejs.org/v2/guide/components-props.html#Pasando-un-Arreglo
+
+
+PASSING DATA BETWEEN COMPONENTS
+	https://www.smashingmagazine.com/2020/01/data-components-vue-js/
+	https://blog.logrocket.com/how-to-use-props-to-pass-data-to-child-components/
+	https://stackoverflow.com/questions/34534151/passing-data-to-components-in-vue-js
+	https://stackoverflow.com/questions/63233592/vue-dont-load-dynamic-src-and-require-doesnt-work/63234629#63234629
+
+SLOTS
+	https://vuejs.org/guide/components/slots.html
+
+
+FECHT JSON 
+
+   https://developer.mozilla.org/es/docs/Web/API/Fetch_API/Using_Fetch	
+
+   LOCAL JSON
+	https://codesandbox.io/s/z2mpz6zq23?file=/src/components/HelloWorld.vue
+	
+   URL JSON
+   https://www.codegrepper.com/code-examples/javascript/vue+3+fetch+data+from+api	
+
+	https://www.youtube.com/watch?v=-Aoyja_BjZY
+	https://www.youtube.com/watch?v=LvOYCjpMQ10
+
+   https://jasonwatmore.com/post/2020/04/30/vue-fetch-http-post-request-examples
+   --->	https://codesandbox.io/s/vue-fetch-http-post-request-examples-4i038?file=/app/PostRequest.vue
+
+PROMISE.ALL
+
+	github_json_array.value.push(Miembros.alumnos[i].github_json)          
+
+   https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all
+
+   https://stackoverflow.com/questions/31710768/how-can-i-fetch-an-array-of-urls-with-promise-all
+
+   promisse.all and inject data
+	https://stackblitz.com/edit/vue-y5hetf?file=src%2Fcomponents%2FHelloWorld.vue
+
+   https://www.codegrepper.com/code-examples/javascript/array+promise+all+in+vue+js
+   https://www.codegrepper.com/code-examples/javascript/frameworks/vue/promises+loop
+   
+   Promise.all and axios
+	https://stackoverflow.com/questions/52669596/promise-all-with-axios
+	
+
+VUE EXAMPLES
+
+   

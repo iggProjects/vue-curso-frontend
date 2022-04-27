@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+    <meta charset="UTF-8">
+    <title>Población INE</title>
+    <link rel="stylesheet" href="assets/css/08-fetch.css">
+    <!-- iconos de google -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- fuente de google -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+<style>
+
+section .divCanvasEstado {
+  width: 90%;
+  margin:30px;
+  border:4px solid rgb(166, 215, 248);
+}  
+
+
+section .divCanvas {
+  width: 45%;
+  margin:30px;
+  border:2px solid rgb(166, 215, 248);
+}  
+
+table {
+  border-collapse: collapse;
+  width: 50%;
+  margin: auto;
+  margin-top: 10px;
+}
+
+th, td {
+  text-align: left;
+  padding: 3px;
+  text-align: center;
+  font-size:11px;
+}
+
+tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+th {
+  background-color: #80c4fc;
+  color: white;
+}
+
+
+</style>
+
+</head>
+<body>
+
+  <div class="container">
+    
+       <header class="disp_center">
+        <div id="barra">            
+            <div id="menu">
+                <nav>
+                    <ul>
+                        <li><a href="#cursos">cursos</a></li>
+                        <li><a href="#front">frontend</a></li>
+                        <li><a href="#cursos">contacto</a></li>
+                    </ul>
+                </nav>
+            </div>
+            <div id="pageTitle"></div>            
+            <div class="toggle-container">
+
+                <!-- -->
+                <button class="theme-btn light" onclick="setTheme('light')" title="Light mode">
+                <!--sun icon-->Light
+                <span class="material-icons">light_mode</span>
+                </button>
+
+                <button class="theme-btn dark" onclick="setTheme('dark')" title="Dark mode">
+                <!--moon icon-->Dark
+                <span class="material-icons">dark_mode</span>                
+                </button>
+
+            </div>
+        </div>
+        
+      </header>        
+
+      <h2>Gráficas de Población</h2>
+      <section id="sectionCanvas" class="disp_center">
+
+        <script>
+
+          // prepara los div's donde irán los gráficos Estado y provincias. El gráfico estado aparecerá con 90% ancho
+
+          var div_canvas = "<div class='divCanvasEstado'><canvas id='myChart00'></canvas></div>";
+          for (var h=1; h<53; h++) {         
+            if ( h > 0 && h < 10 ) { div_canvas += "<div class='divCanvas'><canvas id='myChart0" + h + "'></canvas></div>"; } 
+              else { div_canvas += "<div class='divCanvas'><canvas id='myChart" + h +"'></canvas></div>"; }
+          }
+          document.getElementById("sectionCanvas").innerHTML = div_canvas;
+
+        </script>
+
+
+      </section>        
+        
+      <div><table id="json_info_table"></table></div>  
+      
+  </div>      
+       
+<script>
+
+  //  function setTheme ???
+  const setTheme = theme => document.documentElement.className = theme;
+
+  // read json
+  fetch("https://servicios.ine.es/wstempus/js/es/DATOS_TABLA/2852?tip=AM&")
+
+      .then(response => {
+        if (response.ok)
+          return response.text()
+        else
+          throw new Error(response.status);
+      })
+
+      .then(data1 => {        
+
+          // población en data type = array
+          const poblacion=JSON.parse(data1);
+
+          // elementos DOM para colocar las tablas de cada territorio, en letra pequeña
+          let json_table = "";
+
+          // ubicación del apuntador en el array población
+          let territorio_index=0;
+
+          // número de años de la data por territorio->  poblacion.length div 3 (Estado + 52 provincias)
+          var nMax = poblacion[0].Data.length;
+
+          // Array tipo asociativo
+          var territorioArray = [];
+
+          // Loop territorio por territorio, incluido total nacional. Al ser asociativo, le colocamos arrays adentro
+          for ( var m=0; m<53; m++ ) {
+
+              // apuntador del array territorios
+              territorio_index = 3*m; 
+
+              // html del table por territorio  
+              json_table += "<tr><th colspan=4>" + poblacion[territorio_index].Nombre + "</th></tr>";
+              json_table += "<tr><th>Año</th><th>Pob Tot</th><th>Pob Masc</th><th>Pob Fem</th></tr>";
+
+              // Arrays asociativos vinculado al indice m del territorio
+              territorioArray[m] = [];
+              territorioArray[m]['nombre'] = poblacion[territorio_index].Nombre;
+              territorioArray[m]['año'] = [];
+              territorioArray[m]['pob_tot'] = [];
+              territorioArray[m]['pob_masc'] = [];
+              territorioArray[m]['pob_fem'] = [];
+
+
+              // rellenamos el componente DOM de la tabla, y los arrays que se usarán en la función "grafico"
+              for ( var n=0 ; n < nMax; n++) {
+
+                json_table += '<tr>';  
+
+                json_table += '<td>' + poblacion[territorio_index].Data[nMax-n-1].Anyo + '</td>';
+                territorioArray[m]['año'].push(poblacion[territorio_index].Data[nMax-n-1].Anyo);
+
+                json_table += '<td>' + poblacion[territorio_index].Data[nMax-n-1].Valor.toLocaleString('es') + '</td>'; 
+                territorioArray[m]['pob_tot'].push(poblacion[territorio_index].Data[nMax-n-1].Valor); 
+
+                json_table += '<td>' + poblacion[territorio_index+1].Data[nMax-n-1].Valor.toLocaleString('es') + '</td>'; 
+                territorioArray[m]['pob_masc'].push(poblacion[territorio_index+1].Data[nMax-n-1].Valor); 
+
+                json_table += '<td>' + poblacion[territorio_index+2].Data[nMax-n-1].Valor.toLocaleString('es') + '</td>'; 
+                territorioArray[m]['pob_fem'].push(poblacion[territorio_index+2].Data[nMax-n-1].Valor);   
+
+                json_table += '</tr>';
+
+              }
+              
+
+          }         
+
+          json_table += "</table>";
+
+          // Asignamos la tabla al tag table con id "json_info_table" 
+          document.getElementById("json_info_table").innerHTML=json_table;
+
+          /*
+            Function para graficar un territorio. 
+            Dos parámetros: número del territorio para ubicar data en el array población (territorio_index), 
+                y el id del canvas donde colocar el gráfico
+          */ 
+          function grafico(index_Territ,id_Canvas) {   
+
+            const labels = territorioArray[0]['año'];
+
+            var dataGraf = "data" + index_Territ;
+
+            dataGraf = {
+              labels: labels,
+              datasets: [
+                {
+                //label: 'My First dataset',
+                label: territorioArray[index_Territ]['nombre'],
+                backgroundColor: 'rgb(255, 99, 132)',
+                borderColor: 'rgb(255, 99, 132)',
+                data: territorioArray[index_Territ]['pob_tot'],
+                },
+                {
+                label: '  Pob Masculina',
+                backgroundColor: '#0073e6',
+                borderColor: '#0073e6',
+                data: territorioArray[index_Territ]['pob_masc'],
+                },
+                {
+                label: '  Pob Femenina',              
+                backgroundColor: 'rgb(255, 255, 255)',
+                borderColor: 'rgb(255, 99, 0)',
+                data: territorioArray[index_Territ]['pob_fem'],
+                }
+              ]
+            };
+
+            const config = {
+              type: 'line',
+              data: dataGraf,
+              options: {}
+            };
+
+            const myChart = new Chart(
+              document.getElementById(id_Canvas),
+              config
+            );
+
+          }  
+
+          // Ejecutamos loop para graficar todos los territorios
+          grafico(0,"myChart00");
+          var myChart ="";
+          for ( var h=1; h<53; h++ ) {
+            myChart= "myChart";
+            if ( h > 0 && h < 10 ) { myChart += '0' + h; } else { myChart += h; };
+            console.log("myChart: " + myChart);
+            grafico(h,myChart);
+          }        
+
+      })
+
+      .catch(err => {
+        console.error("ERROR: ", err.message)
+
+  });
+
+  
+</script>         
+ 
+</body>
+
+
+<script>
+
+
+    /*
+
+    json_items="";
+    let i=0;
+    json_items += 'tamaño json: ' + poblacion.length + '<br><br>';
+
+    for (const item of poblacion) {
+
+      var typeItem = typeof item;  
+      json_items+='<span style="color:blue">item: ' + i + ' | ' + typeItem + ' | isArray? ' + Array.isArray(item) + '</span><br><br>';
+
+      if ( typeof item === 'object') {
+          for ( const [key, value] of Object.entries(item) ) {
+              json_items += '-> key: ' + key + ' | value: ' + value + ' | isArray?' + Array.isArray(value)  + '<br>';     
+
+              if( typeof value === 'object' ) {
+
+                  for ( const [k1, v1] of Object.entries(value) ) {
+                      json_items += '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + '-> key: ' + k1 + ' | value: ' + v1 + ' | isArray?' + Array.isArray(v1)  + '<br>';     
+
+                      if( typeof v1 === 'object' ) {
+                          for ( const [k2, v2] of Object.entries(v1) )
+                          json_items += '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + '-> key: ' + k2 + ' | value: ' + v2 + ' | isArray?' + Array.isArray(v2)  + '<br>';     
+                      }   
+                  }
+
+              }    
+
+
+          }     
+      }
+      json_items += '<br>';
+      i++;
+    
+    }
+    */
+
+    /*
+    let array0 = poblacion[0].Data;
+    json_items+= '<span style="color:green">' + array0 + '</span><br><br>';
+    
+    for ( const [k, v] of Object.entries(array0) ) {
+        json_items+= '<span style="color:green">key:  ' + k + ' | value: ' + v + '</span><br><br>';
+
+        if ( typeof v === 'object' ) {
+          for ( const [k1, v1] of Object.entries(v) ) {
+              json_items += '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + '-> key: ' + k1 + ' | value: ' + v1 + ' | isArray?' + Array.isArray(v1)  + '<br>';     
+          }    
+        }
+        json_items += '<br>';
+    }
+    
+    let año_0 = poblacion[0].Data[0].Anyo;
+    let pob_0 = poblacion[0].Data[0].Valor;
+    json_items += '<br><br>Año: ' + año_0 + ' , pob: ' + pob_0;
+    
+
+    let array_0 = poblacion[0].Data;
+
+    for ( var m=0; m< array_0.length; m++ ) {
+      json_items += '<br><br>Año: ' + array_0[m].Anyo + ' , Pob: ' + array_0[m].Valor;
+    }
+    */
+
+
+/*  
+  function ficha_persona (persona){
+    ficha = `
+      <ul>
+        <li id="liName"><b>${persona.Nombre}</b></li>        
+        <li>&nbsp;</li>
+        <li>
+          <div id="rel_icons">
+            <a href="${persona.email}" target="_blank">Email<img src="assets/icons/mail-icon.svg" width="20px"></a>
+            <a href="${persona.linked}" target="_blank">Linked<img src="assets/icons/linkedin-brands.svg" width="20px"></a>
+            <a href="${persona.github}" target="_blank">github<img src="assets/icons/github-brands.svg" width="20px"></a>
+            <a href="${persona.github_following}" target="_blank">github Following<img src="assets/icons/github-brands.svg" width="20px"></a>
+          </div>
+        </li>
+      </ul>
+      `;
+     
+      return ficha;      
+  }
+
+  function evolucion(pers)
+  {
+    let evolucion = '<table><tr><th>Materia</th><th>Inicio</th><th>Fin</th></tr>';
+
+    console.log( 'persona.incio-> ' + (pers.inicio) );
+    //console.log('HTML' + pers.inicio.html);
+    for ( let i in pers.inicio, pers.fin )
+    {
+      console.log ('persona inicio ' + i + ': ' + pers.inicio[i] + ' | persona fin ' + i + ': ' + pers.fin[i]);
+     
+      evolucion += `<tr><td>${i}</td><td>${estrellas(pers.inicio[i])}</td><td>${estrellas(pers.fin[i])}</td></tr>`;    
+    }     
+    
+    evolucion +='</table>';
+    return evolucion;  
+
+  }
+
+  function estrellas(n){
+        texto = '';
+        for (i=1;i<=n;i++){ texto += '*';}
+        return texto;
+  }
+*/
+
+
+
+</script>
+</html>
+
+
